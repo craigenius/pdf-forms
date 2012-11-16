@@ -19,10 +19,9 @@ module PdfForms
 
     def read_fields
       field_output = @pdftk.call_pdftk quote_path(path), 'dump_data_fields'
-      @fields = field_output.split(/^---\n/).map do |field_text|
-        if field_text =~ /^FieldName: (\w+)$/
-          $1
-        end
+      field_hash = YAML::parse(field_output).transform
+      @fields = field_hash.map do |field|
+        field["FieldName"]
       end.compact.uniq
     end
   end
